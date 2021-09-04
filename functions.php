@@ -70,7 +70,7 @@
 
 
 	// Ensure cart contents update when products are added to the cart via AJAX (place the following in functions.php)
-	add_filter('add_to_cart_fragments', 'woocommerce_header_add_to_cart_fragment'); 
+	add_filter('add_to_cart_fragments', 'woocommerce_header_add_to_cart_fragment');
 	function woocommerce_header_add_to_cart_fragment( $fragments ) {
 		global $woocommerce;
 
@@ -79,7 +79,7 @@
 		?>
 		<?php if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 				$count = WC()->cart->cart_contents_count;
-				?><a class="cart-contents" href="<?php echo WC()->cart->get_cart_url(); ?>" title="<?php _e( 'View your shopping cart' ); ?>"><?php 
+				?><a class="cart-contents" href="<?php echo WC()->cart->get_cart_url(); ?>" title="<?php _e( 'View your shopping cart' ); ?>"><?php
 				if ( $count > 0 ) {
 				?>
 				<strong class="cart-contents-count rounded"><?php echo esc_html( $count ); ?></strong>
@@ -141,7 +141,7 @@
 			<?php //if ( has_post_thumbnail() ): ?>
 				<!--div class="col-md-5 text-center"> <?php
 					//$image = wp_get_attachment_image_src( get_post_thumbnail_id( $the_query->get_the_ID() ), 'single-post-thumbnail' );
-					//echo '<a href="'. get_permalink() .'"><img src="'.$image[0].'" class="img-155"></a>'; ?>	
+					//echo '<a href="'. get_permalink() .'"><img src="'.$image[0].'" class="img-155"></a>'; ?>
 				</div>
 				<div class="col-md-7">
 					<h4>
@@ -173,7 +173,7 @@
 		<?php echo '<hr></li>';
 		endwhile;
 		wp_reset_postdata();endif;
-		echo "</ul>"; 
+		echo "</ul>";
 	}
 	add_shortcode( 'recent-posts', 'my_recent_post' );
 
@@ -182,9 +182,9 @@
 
 
 
-	function woocommerce_product_loop_start() { 
+	function woocommerce_product_loop_start() {
 		//echo '<div class="products row-eq-height pull-left top-buffer">';
-		echo '<div class="row equal pull-left">'; 
+		echo '<div class="row equal pull-left">';
 	}
 
 
@@ -200,22 +200,22 @@
 	  	echo '<div class="options_group">';
 
 		// Text Field
-		woocommerce_wp_text_input( 
-			array( 
-				'id'          => '_wc_Price_In_Dollar', 
-				'label'       => __( 'Price in USD', 'woocommerce' ), 
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_wc_Price_In_Dollar',
+				'label'       => __( 'Price in USD', 'woocommerce' ),
 				'placeholder' => '',
-				'description' => __( 'Enter Price in USD $', 'woocommerce' ) 
+				'description' => __( 'Enter Price in USD $', 'woocommerce' )
 			)
 		);
 
 		// Textarea
-		woocommerce_wp_textarea_input( 
-			array( 
-				'id'          => '_wc_Quotes', 
-				'label'       => __( 'Quotes', 'woocommerce' ), 
-				'placeholder' => '', 
-				'description' => __( 'Enter Quotes here.', 'woocommerce' ) 
+		woocommerce_wp_textarea_input(
+			array(
+				'id'          => '_wc_Quotes',
+				'label'       => __( 'Quotes', 'woocommerce' ),
+				'placeholder' => '',
+				'description' => __( 'Enter Quotes here.', 'woocommerce' )
 			)
 		);
 	  	echo '</div>';
@@ -224,11 +224,11 @@
 	// Save Fields
 	add_action( 'woocommerce_process_product_meta', 'woo_add_custom_general_fields_save' );
 	function woo_add_custom_general_fields_save( $post_id ){
-		
+
 		// Text Field
 		$woocommerce_text_field = $_POST['_wc_Price_In_Dollar'];
 		if( !empty( $woocommerce_text_field ) )
-			update_post_meta( $post_id, '_wc_Price_In_Dollar', esc_attr( $woocommerce_text_field ) );		
+			update_post_meta( $post_id, '_wc_Price_In_Dollar', esc_attr( $woocommerce_text_field ) );
 
 		// Textarea
 		$woocommerce_textarea = $_POST['_wc_Quotes'];
@@ -240,7 +240,7 @@
 	add_filter( 'woocommerce_product_tabs', 'woo_remove_product_tabs', 98 );
 	function woo_remove_product_tabs( $tabs ) {
 	    unset( $tabs['reviews'] );
-		unset( $tabs['additional_information'] ); 
+		unset( $tabs['additional_information'] );
 	    return $tabs;
 
 	}
@@ -262,7 +262,7 @@
 
 	function navayana_get_price_in_dollar() {
 		if(get_post_meta( get_the_ID(), '_wc_Price_In_Dollar', true )){
-			echo '$ '. get_post_meta( get_the_ID(), '_wc_Price_In_Dollar', true );	
+			echo '$ '. get_post_meta( get_the_ID(), '_wc_Price_In_Dollar', true );
 		}
 	}
 
@@ -299,4 +299,26 @@
 		_e($link);
 	}
 
+	// Hook for woocommerce checkout fields
+	add_filter( 'woocommerce_checkout_fields' , 'navayana_override_checkout_fields' );
 
+	// Adds shipping_phone, $fields is passed via the filter!
+	function navayana_override_checkout_fields( $fields ) {
+	     $fields['shipping']['shipping_phone'] = array(
+	        'label'     => __('Phone', 'woocommerce'),
+	    'placeholder'   => _x('Phone', 'placeholder', 'woocommerce'),
+	    'required'  => false,
+	    'class'     => array('form-row-wide'),
+	    'clear'     => true
+	     );
+
+	     return $fields;
+	}
+
+	//Display shipping_phone on the order edit page
+
+	add_action( 'woocommerce_admin_order_data_after_shipping_address', 'navayana_checkout_field_display_admin_order_meta', 10, 1 );
+
+	function navayana_checkout_field_display_admin_order_meta($order){
+	    echo '<p><strong>'.__('Phone for shipping').':</strong> ' . get_post_meta( $order->get_id(), '_shipping_phone', true ) . '</p>';
+	}
