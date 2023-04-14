@@ -134,7 +134,8 @@
 					'post_type'			=>	'product',
 					'posts_per_page' 		=>	6,
 					'post__not_in'			=>	array($feat_prod),
-					'orderby'			=> 	'rand',
+					'orderby'			=> 	'date',
+					'order'				=>	'DESC',
 					'tax_query'			=>	$tax_query
 				);
 
