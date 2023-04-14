@@ -135,7 +135,7 @@
 					'posts_per_page' 		=>	6,
 					'post__not_in'			=>	array($feat_prod),
 					'orderby'			=> 	'date',
-					'order'				=>	'ASC',
+					'order'				=>	'DESC',
 					'tax_query'			=>	$tax_query
 				);
 
