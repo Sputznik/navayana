@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The template for displaying product content within loops
  *
@@ -12,38 +13,36 @@
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 3.6.0
+ * @version 9.4.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
+defined('ABSPATH') || exit;
 
 global $product;
 
-// Ensure visibility
-if ( empty( $product ) || ! $product->is_visible() ) {
+// Check if the product is a valid WooCommerce product and ensure its visibility before proceeding.
+if (! is_a($product, WC_Product::class) || ! $product->is_visible()) {
 	return;
 }
 ?>
-<div <?php 
-		$classes[] = 'col-md-6 top-buffer bottom-buffer'; 
-		post_class( $classes );
-	?> >
+<div <?php
+		$classes[] = 'col-md-6 top-buffer bottom-buffer';
+		post_class($classes);
+		?>>
 
 	<div class="row">
 		<div class="col-sm-6">
-			<a href="<?php echo get_the_permalink()?>">
-				<?php if ( has_post_thumbnail() ): ?>
-				<?php $image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' ); ?>
-			 	<img src="<?php echo $image[0]?>" alt="">
-			 	<?php endif; ?>
-			 </a>			
+			<a href="<?php echo get_the_permalink() ?>">
+				<?php if (has_post_thumbnail()): ?>
+					<?php $image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'single-post-thumbnail'); ?>
+					<img src="<?php echo $image[0] ?>" alt="">
+				<?php endif; ?>
+			</a>
 		</div>
 		<div class="col-sm-6">
 			<h4>
 				<strong>
-					<a href="<?php echo get_the_permalink()?>">
+					<a href="<?php echo get_the_permalink() ?>">
 						<?php echo get_the_title(); ?>
 					</a>
 				</strong>
@@ -52,10 +51,9 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 				<?php echo wpautop($product->get_short_description()); ?>
 			</div>
 			<p>
-				<p class="price"><?php echo $product->get_price_html(); ?></p>
-				<?php woocommerce_template_loop_add_to_cart( $product ); ?>
+			<p class="price"><?php echo $product->get_price_html(); ?></p>
+			<?php woocommerce_template_loop_add_to_cart($product); ?>
 			</p>
 		</div>
 	</div>
 </div>
-
